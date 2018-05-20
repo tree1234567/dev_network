@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const gravatar = require("gravatar");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const keys = require("../../config/keys").secretOrKey;
 // Load User model
 const User = require("../../models/User");
 
@@ -29,7 +31,7 @@ router.post("/register", (req, res) => {
         avatar,
         password: req.body.password
       });
-
+      console.log(typeof newUser);
       bcrypt.genSalt(10, (err, salt) => {
         bcrypt.hash(newUser.password, salt, (err, hash) => {
           if (err) throw err;
@@ -65,7 +67,20 @@ router.post("/login", (req, res) => {
             .status(400)
             .json({ email: "User/Password combination not found" });
         else {
-          res.json({ msg: "Success" });
+          //User matched
+
+          const payload = {
+            // Create Jwt payload
+            id: user.id,
+            name: user.name,
+            avatar: user.avatar
+          };
+          jwt.sign(payload, keys, { expiresIn: 3600 }, (err, token) => {
+            res.json({
+              success: true,
+              token: "Bearer " + token
+            });
+          });
         }
       });
     }
