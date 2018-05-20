@@ -44,4 +44,32 @@ router.post("/register", (req, res) => {
   });
 });
 
+//@route    Post api/users/login
+//@desc     Login Users
+//@access   Public
+
+router.post("/login", (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+
+  //Find user by email
+  User.findOne({ email }).then(user => {
+    if (!user)
+      return res
+        .status(400)
+        .json({ email: "User/Password combination not found" });
+    else {
+      bcrypt.compare(password, user.password).then(isMatch => {
+        if (!isMatch)
+          return res
+            .status(400)
+            .json({ email: "User/Password combination not found" });
+        else {
+          res.json({ msg: "Success" });
+        }
+      });
+    }
+  });
+});
+
 module.exports = router;
