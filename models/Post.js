@@ -12,12 +12,12 @@ const PostSchema = new Schema({
     required: true
   },
   name: {
-    type: String,
-    required: true
+    type: String
+    // required: true
   },
   avatar: {
-    type: String,
-    required: true
+    type: String
+    // required: true
   },
   likes: [
     {
@@ -38,17 +38,19 @@ const PostSchema = new Schema({
         required: true
       },
       avatar: {
-        type: String,
-        required: true
+        type: String
+        // required: true
       },
       date: {
-        type: Date.now,
+        type: Date,
+        default: Date.now,
         required: true
       }
     }
   ],
   date: {
-    type: Date.now,
+    type: Date,
+    default: Date.now,
     required: true
   }
 });
