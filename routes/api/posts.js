@@ -100,6 +100,41 @@ router.post(
   }
 );
 
+//@route    Post api/posts/like
+//@desc     Unlike  a Post
+//@access   Private
+router.post(
+  "/unlike/:post_id",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    Post.findById(req.params.post_id)
+      .then(post => {
+        if (
+          post.likes.filter(like => like.user.toString() === req.user.id)
+            .length === 0
+        ) {
+          return res
+            .status(400)
+            .json({ notliked: "user has not yet liked this post" });
+        }
+        const removeIndex = post.likes
+          .map(item => item.user.toString())
+          .indexOf(req.user.id);
+
+        post.likes.splice(removeIndex, 1);
+
+        post
+          .save()
+          .then(post => res.json(post))
+          .catch(err =>
+            res.status(400).json({ notliked: "Unable to dislike at this time" })
+          );
+      })
+      .catch(err =>
+        res.status(404).json({ postnotfound: "post not found with that Id" })
+      );
+  }
+);
 //@route    Post api/posts
 //@desc     Create Post
 //@access   Private
@@ -121,6 +156,86 @@ router.post(
       .save()
       .then(post => res.json(post))
       .catch(err => res.status(400).json(err));
+  }
+);
+//@route    Post api/posts/comment/:id
+//@desc     Add comment to post
+//@access   Private
+
+router.post(
+  "/comment/:id",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    Post.findById(req.params.id)
+      .then(post => {
+        console.log(post);
+        console.log(req.user);
+        const { errors, isValid } = validPostInput(req.body);
+        console.log("passed validation");
+        if (!isValid) {
+          return releaseEvents.stats(400).json(errors);
+        }
+
+        console.log(req.body.text);
+        console.log(req.user.name);
+        console.log(req.user.avatar);
+        console.log(req.user.id);
+        const newComment = {
+          text: req.body.text,
+          name: req.user.name,
+          avatar: req.user.avatar,
+          user: req.user.id
+        };
+
+        //Add to comments array
+
+        post.comments.unshift(newComment);
+        post
+          .save()
+          .then(post => res.json(post))
+          .catch(err =>
+            res.status(404).json({
+              commentNotSaved: "comment could not be added at this time"
+            })
+          );
+      })
+      .catch(err =>
+        res.status(404).json({
+          postNotFound: "Could not find post"
+        })
+      );
+  }
+);
+//@route    Delete api/posts/comment/:id/:comment_id
+//@desc     Delete comment on post
+//@access   Private
+
+router.delete(
+  "/comment/:id/:comment_id",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    Post.findById(req.params.id)
+      .then(post => {
+        //find comment idx in array
+        const removeIndex = post.comments
+          .map(comment => comment._id.toString())
+          .indexOf(req.params.comment_id);
+
+        post.comments.splice(removeIndex, 1);
+        post
+          .save()
+          .then(post => res.json(post))
+          .catch(err =>
+            res.status(404).json({
+              commentNotSaved: "comment could not be removed at this time"
+            })
+          );
+      })
+      .catch(err =>
+        res.status(404).json({
+          postNotFound: "Could not find post"
+        })
+      );
   }
 );
 
