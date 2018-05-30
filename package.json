@@ -4,9 +4,12 @@
   "description": "Social Network for devs",
   "main": "server.js",
   "scripts": {
+    "client-install": "npm install --prefix client",
     "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "server": "nodemon server.js"
+    "server": "nodemon server.js",
+    "client": "npm start --prefix client",
+    "dev": "concurrently \"npm run server\" \" npm run client\""
   },
   "author": "Armando",
   "license": "MIT",
