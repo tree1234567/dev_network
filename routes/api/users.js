@@ -40,7 +40,6 @@ router.post("/register", (req, res) => {
         avatar,
         password: req.body.password
       });
-      console.log(typeof newUser);
       bcrypt.genSalt(10, (err, salt) => {
         bcrypt.hash(newUser.password, salt, (err, hash) => {
           if (err) throw err;
@@ -69,19 +68,16 @@ router.post("/login", (req, res) => {
 
   //Find user by email
   User.findOne({ email }).then(user => {
-    if (!user)
-      return res
-        .status(400)
-        .json({ errors: { email: "User/Password combination not found" } });
-    else {
+    if (!user) {
+      errors.email = "User/Password combination not found";
+      return res.status(400).json(errors);
+    } else {
       bcrypt.compare(password, user.password).then(isMatch => {
-        if (!isMatch)
-          return res
-            .status(400)
-            .json({ errors: { email: "User/Password combination not found" } });
-        else {
+        if (!isMatch) {
+          errors.email = "User/Password combination not found";
+          return res.status(400).json(errors);
+        } else {
           //User matched
-
           const payload = {
             // Create Jwt payload
             id: user.id,
