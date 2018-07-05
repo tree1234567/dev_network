@@ -17,7 +17,6 @@ const SelectListGroup = ({ name, value, error, info, onChange, options }) => {
         })}
         onChange={onChange}
         value={value}
-        disabled={disabled}
       >
         {selectOptions}
       </select>

@@ -26,7 +26,6 @@ const InputGroup = ({
         })}
         onChange={onChange}
         value={value}
-        disabled={disabled}
       />
       {error && <div className="invalid-feedback">{error}</div>}
     </div>
