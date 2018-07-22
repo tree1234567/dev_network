@@ -18,7 +18,7 @@ const InputGroup = ({
           <i className={icon} />
         </span>
       </div>
-      <textarea
+      <input
         name={name}
         placeholder={placeholder}
         className={classnames("form-control form-control-lg", {
