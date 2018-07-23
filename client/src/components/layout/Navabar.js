@@ -46,6 +46,12 @@ class Navbar extends Component {
             title="You must have a Gravatar to connected to email"
           />
         </li>
+
+        <li className="nav-item">
+          <Link className="nav-link" to="/dashboard">
+            Dashboard
+          </Link>
+        </li>
       </ul>
     );
     return (
