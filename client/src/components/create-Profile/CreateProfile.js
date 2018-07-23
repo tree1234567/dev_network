@@ -187,7 +187,7 @@ class CreateProfile extends Component {
                 <TextFieldGroup
                   placeholder="Github Username"
                   name="githubusername"
-                  value={this.state.handle}
+                  value={this.state.githubusername}
                   onChange={this.githubusername}
                   error={errors.githubusername}
                   info="If you want your latest repos and a Github link, include your username"
